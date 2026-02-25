@@ -1724,6 +1724,9 @@ class BaseChatOpenAI(BaseChatModel):
             **self._default_params,
             **kwargs,
         }
+        # Override stream param when disable_streaming="tool_calling" and tools are passed
+        if self.disable_streaming == "tool_calling" and params.get("tools"):
+            params["stream"] = False
         # Redact headers from built-in remote MCP tool invocations
         if (tools := params.get("tools")) and isinstance(tools, list):
             params["tools"] = [
